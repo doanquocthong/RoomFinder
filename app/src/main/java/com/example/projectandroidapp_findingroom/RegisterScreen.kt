@@ -1,9 +1,8 @@
-package com.example.nhatro
+package com.example.projectandroidapp_findingroom
 
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +21,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -40,7 +38,7 @@ import com.example.projectandroidapp_findingroom.R
 
 @Preview (showBackground = true)
 @Composable
-fun Register() {
+fun RegisterScreen() {
     Box(
         modifier = Modifier.fillMaxSize().background(color = colorResource(R.color.main_color)),
 
