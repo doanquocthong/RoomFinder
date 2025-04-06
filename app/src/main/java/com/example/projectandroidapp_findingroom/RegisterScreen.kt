@@ -34,11 +34,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.projectandroidapp_findingroom.R
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 
-@Preview (showBackground = true)
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize().background(color = colorResource(R.color.main_color)),
 
