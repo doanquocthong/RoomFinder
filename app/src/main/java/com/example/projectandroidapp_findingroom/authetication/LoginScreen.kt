@@ -1,8 +1,9 @@
-package com.example.projectandroidapp_findingroom
+package com.example.projectandroidapp_findingroom.authetication
 
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -47,10 +49,10 @@ fun LoginScreen(navController: NavController) {
             .fillMaxSize()
             .background(color = colorResource(R.color.main_color)),
 
-    ) {
+        ) {
         Column(
             modifier = Modifier
-            .padding(50.dp),
+                .padding(50.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         )
         {
@@ -104,17 +106,21 @@ fun LoginScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(
-                checked = false,
-                onCheckedChange = {},
-
-            )
+                Checkbox(
+                    checked = false,
+                    onCheckedChange = {},
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = colorResource(R.color.white),
+                        uncheckedColor = colorResource(R.color.checkbox_color),
+                        checkmarkColor = Color.White
+                    )
+                )
                 Text(
                     text = "Hiện Mật Khẩu",
                     fontSize = 15.sp,
                     fontFamily = fontFamily
                 )
-        }
+            }
             Spacer(modifier = Modifier.height(20.dp))
 
             Row(
@@ -122,14 +128,16 @@ fun LoginScreen(navController: NavController) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                Button(onClick = {},
+                Button(onClick = {
+                    navController.navigate("main")
+                },
                     modifier = Modifier
                         .width(150.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Black,
                         contentColor = colorResource(R.color.main_color)
                     ))
-                    {
+                {
                     Text(
                         text = "Xác Nhận",
                         fontFamily = fontFamily,
@@ -141,11 +149,14 @@ fun LoginScreen(navController: NavController) {
             }
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Đăng nhập/Đăng ký",
+                text = "Bạn chưa có tài khoản? Đăng ký",
                 fontSize = 15.sp,
                 fontFamily = fontFamily,
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clickable {
+                        navController.navigate("register")
+                    },
                 textAlign = TextAlign.End,
             )
 
