@@ -86,58 +86,58 @@ fun CardRoom() {
     val address = "597/14 Quang Trung, Phường 11, Gò Vấp, Hồ Chí Minh"
     val price = "5 triệu"
     val state = true
-        Surface(
-            shape = RoundedCornerShape(17.dp),
-            shadowElevation = 10.dp,
-            modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 30.dp)
+    Surface(
+        shape = RoundedCornerShape(17.dp),
+        shadowElevation = 10.dp,
+        modifier = Modifier
+            .padding(start = 20.dp, end = 20.dp, top = 30.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Image(
+                painter = painterResource(R.drawable.anh1),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(Modifier.padding(5.dp))
+            Column (
+                modifier = Modifier
+                    .padding(10.dp)
             ) {
-                Image(
-                    painter = painterResource(R.drawable.anh1),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
+                Text(
+                    "Địa chỉ: ${address}",
+                    fontFamily = fontFamily
                 )
                 Spacer(Modifier.padding(5.dp))
-                Column (
+                Text(
+                    "Giá: ${price}",
+                    color = Color.Blue,
+                    fontFamily = fontFamily
+
+                )
+                Spacer(Modifier.padding(5.dp))
+                Surface (
                     modifier = Modifier
-                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    color = Color.LightGray,
+                    shape = RoundedCornerShape(17.dp)
                 ) {
                     Text(
-                        "Địa chỉ: ${address}",
-                        fontFamily = fontFamily
-                    )
-                    Spacer(Modifier.padding(5.dp))
-                    Text(
-                        "Giá: ${price}",
-                        color = Color.Blue,
-                        fontFamily = fontFamily
-
-                    )
-                    Spacer(Modifier.padding(5.dp))
-                    Surface (
+                        if (state) {
+                            "Còn trống 1 phòng"
+                        }else "Phòng đã có người cọc",
                         modifier = Modifier
+                            .padding(10.dp)
                             .fillMaxWidth(),
-                        color = Color.LightGray,
-                        shape = RoundedCornerShape(17.dp)
-                    ) {
-                        Text(
-                            if (state) {
-                                "Còn trống 1 phòng"
-                            }else "Phòng đã có người cọc",
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .fillMaxWidth(),
-                            color = Color.Black,
-                            textAlign = TextAlign.Center,
-                            fontFamily = fontFamily
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        fontFamily = fontFamily
 
-                        )
-                    }
+                    )
                 }
             }
         }
+    }
 }

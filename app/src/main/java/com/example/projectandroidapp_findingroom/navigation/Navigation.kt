@@ -15,7 +15,7 @@ import com.example.projectandroidapp_findingroom.pages.ExtensionScreen
 fun Navigation() {
     val modifier = Modifier
     val navController = rememberNavController()
-    NavHost(navController, startDestination = "main") {
+    NavHost(navController, startDestination = "splash") {
         composable("splash") { SplashScreen(navController) }
         composable("login") { LoginScreen(navController) }
         composable("register") { RegisterScreen(navController) }
