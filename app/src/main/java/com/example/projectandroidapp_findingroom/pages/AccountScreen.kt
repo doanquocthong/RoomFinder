@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.projectandroidapp_findingroom.ui.theme.fontFamily
 
 @Composable
-fun ProfileScreen(){
+fun AccountScreen(){
     Box(
         modifier = Modifier
             .fillMaxSize(),
