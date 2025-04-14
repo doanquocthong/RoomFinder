@@ -97,6 +97,6 @@ fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int, navControl
         0-> HomeScreen()
         1-> ExtensionScreen()
         2-> NotificationScreen()
-        3-> AccountScreen(navController)
+        3-> AccountScreen()
     }
 }

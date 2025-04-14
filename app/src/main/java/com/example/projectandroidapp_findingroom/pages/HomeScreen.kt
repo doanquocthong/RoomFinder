@@ -119,7 +119,7 @@ fun CardRoom() {
                 ) {
                     Text(
                         if (state) {
-                            "Còn trống 1 phòng"
+                            "Phòng còn trống"
                         }else "Phòng đã có người cọc",
                         modifier = Modifier
                             .padding(10.dp)
