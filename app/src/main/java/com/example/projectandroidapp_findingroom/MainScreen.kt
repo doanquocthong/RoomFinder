@@ -31,10 +31,11 @@ import com.example.projectandroidapp_findingroom.pages.AccountScreen
 import com.example.projectandroidapp_findingroom.pages.ExtensionScreen
 import com.example.projectandroidapp_findingroom.pages.HomeScreen
 import com.example.projectandroidapp_findingroom.pages.NotificationScreen
+import com.example.projectandroidapp_findingroom.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun MainScreen(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
 
 
     val navItemList = listOf(
@@ -86,17 +87,17 @@ fun MainScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
         }
     ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex, navController)
+        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex, navController, authViewModel)
     }
 }
 
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int, navController: NavController) {
+fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int, navController: NavController, authViewModel: AuthViewModel) {
     when(selectedIndex){
         0-> HomeScreen()
         1-> ExtensionScreen()
         2-> NotificationScreen()
-        3-> AccountScreen()
+        3-> AccountScreen(navController, authViewModel)
     }
 }

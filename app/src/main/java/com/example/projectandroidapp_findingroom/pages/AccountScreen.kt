@@ -1,6 +1,7 @@
 package com.example.projectandroidapp_findingroom.pages
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,21 +31,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.projectandroidapp_findingroom.ui.theme.fontFamily
+import com.example.projectandroidapp_findingroom.viewmodel.AuthState
+import com.example.projectandroidapp_findingroom.viewmodel.AuthViewModel
+import androidx.navigation.NavController
 
 @Composable
-fun AccountScreen(){
+fun AccountScreen(navController: NavController, authViewModel: AuthViewModel){
     Box(
         modifier = Modifier
             .fillMaxSize(),
     ){
 
-        Profile()
+        Profile(navController, authViewModel)
     }
 
 }
-@Preview(showBackground = true)
+
 @Composable
-fun Profile(){
+fun Profile(navController: NavController, authViewModel: AuthViewModel){
+    val authState = authViewModel.authState.observeAsState()
+    LaunchedEffect(authState.value) {
+        when(authState.value){
+            is AuthState.Unauthenticated -> navController.navigate("login")
+            else -> Unit
+        }
+    }
     val name = "huy"
 //    val user = FirebaseAuth.getInstance().currentUser
 //    val avatarUri = user?.photoUrl?.toString() ?: ""
@@ -81,7 +94,13 @@ fun Profile(){
             Spacer(modifier = Modifier.height(150.dp))
             Surface (
 
-                modifier = Modifier.height(50.dp).width(300.dp).clip(shape = RoundedCornerShape(40)),
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(300.dp)
+                    .clip(shape = RoundedCornerShape(40))
+                    .clickable {
+                        authViewModel.signout()
+                    },
                 color = Color.Black
             ){
 
