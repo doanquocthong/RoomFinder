@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.projectandroidapp_findingroom.AddRoomScreen
 import com.example.projectandroidapp_findingroom.MainScreen
 import com.example.projectandroidapp_findingroom.SplashScreen
 import com.example.projectandroidapp_findingroom.authetication.LoginScreen
@@ -23,5 +24,6 @@ fun Navigation() {
         composable("login") { LoginScreen(navController, authViewModel) }
         composable("register") { RegisterScreen(navController, authViewModel) }
         composable("main") { MainScreen(modifier, navController, authViewModel) }
+        composable("add") { AddRoomScreen() }
     }
 }

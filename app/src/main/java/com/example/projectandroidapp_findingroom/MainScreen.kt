@@ -36,58 +36,69 @@ import com.example.projectandroidapp_findingroom.viewmodel.AuthViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
-
-
     val navItemList = listOf(
-        NavItem("Trang chủ", painterResource(R.drawable.baseline_home_filled_24),0),
-        NavItem("Công cụ", painterResource(R.drawable.baseline_extension_24),0),
-        NavItem("Thông báo", painterResource(R.drawable.baseline_notifications_24),0),
-        NavItem("Tài khoản", painterResource(R.drawable.baseline_person_24),0),
+        NavItem("Trang chủ", painterResource(R.drawable.baseline_home_filled_24), 0),
+        NavItem("Công cụ", painterResource(R.drawable.baseline_extension_24), 0),
+        NavItem("Thông báo", painterResource(R.drawable.baseline_notifications_24), 3), // giả sử có 3 thông báo
+        NavItem("Tài khoản", painterResource(R.drawable.baseline_person_24), 0),
     )
 
-    var selectedIndex by remember {
-        mutableIntStateOf(0)
-    }
+    var selectedIndex by remember { mutableIntStateOf(0) }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar (
-                containerColor = colorResource(R.color.main_color)
-            ){
+            NavigationBar(containerColor = colorResource(R.color.main_color)) {
                 navItemList.forEachIndexed { index, navItem ->
                     NavigationBarItem(
-                        modifier = Modifier
-                            .size(30.dp),
                         selected = selectedIndex == index,
                         onClick = { selectedIndex = index },
                         icon = {
-                            BadgedBox(badge = {
-                                if (navItem.badgeCount > 0) {
+                            if (navItem.badgeCount > 0) {
+                                BadgedBox(badge = {
                                     Badge {
                                         Text(text = navItem.badgeCount.toString())
                                     }
+                                }) {
+                                    Icon(
+                                        painter = navItem.icon,
+                                        contentDescription = navItem.label,
+                                        modifier = Modifier.size(24.dp)
+                                    )
                                 }
-                            }) {
-                                Icon(painter = navItem.icon, contentDescription = navItem.label)
+                            } else {
+                                Icon(
+                                    painter = navItem.icon,
+                                    contentDescription = navItem.label,
+                                    modifier = Modifier.size(24.dp)
+                                )
                             }
                         },
                         label = {
-                            Text(text = navItem.label)
+                            Text(
+                                text = navItem.label,
+                                maxLines = 1
+                            )
                         },
                         alwaysShowLabel = true,
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = colorResource(R.color.white),
                             selectedTextColor = colorResource(R.color.white),
-                            indicatorColor = colorResource(R.color.checkbox_color) // Nền vùng chọn
+                            unselectedIconColor = colorResource(R.color.black), // bạn cần thêm màu này vào `colors.xml`
+                            unselectedTextColor = colorResource(R.color.black),
+                            indicatorColor = colorResource(R.color.checkbox_color)
                         )
                     )
-
                 }
             }
         }
     ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding),selectedIndex, navController, authViewModel)
+        ContentScreen(
+            modifier = Modifier.padding(innerPadding),
+            selectedIndex = selectedIndex,
+            navController = navController,
+            authViewModel = authViewModel
+        )
     }
 }
 
@@ -95,8 +106,8 @@ fun MainScreen(modifier: Modifier = Modifier, navController: NavController, auth
 @Composable
 fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int, navController: NavController, authViewModel: AuthViewModel) {
     when(selectedIndex){
-        0-> HomeScreen()
-        1-> ExtensionScreen()
+        0-> HomeScreen(navController)
+        1-> ExtensionScreen(navController)
         2-> NotificationScreen()
         3-> AccountScreen(navController, authViewModel)
     }

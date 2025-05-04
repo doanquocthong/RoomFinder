@@ -44,7 +44,7 @@ fun NotificationScreen() {
             .fillMaxSize(),
     ){
         Column {
-        HeaderNotifi()
+            HeaderRecycling("Thông báo")
         LazyColumn {
             items (10){
                 CardNotifi()
@@ -56,16 +56,16 @@ fun NotificationScreen() {
 
 
 @Composable
-fun HeaderNotifi() {
+fun HeaderRecycling(text: String) {
     Surface(
         color = colorResource(R.color.main_color),
         modifier = Modifier
-            .height(140.dp)
+            .height(120.dp)
             .fillMaxWidth(),
 
     ) {
         Text(
-            text = "Thông báo",
+            text = text,
             textAlign = TextAlign.Center,
             fontFamily = fontFamily,
             color = Color.Black,

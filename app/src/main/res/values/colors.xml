@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="main_color">#E5A63F</color>
     <color name="checkbox_color">#DA901B</color>
+    <color name="nav_item_unselected">#BBBBBB</color>
 </resources>

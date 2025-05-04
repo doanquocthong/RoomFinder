@@ -2,6 +2,7 @@ package com.example.projectandroidapp_findingroom.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +28,7 @@ import com.example.projectandroidapp_findingroom.R
 import com.example.projectandroidapp_findingroom.ui.theme.fontFamily
 
 @Composable
-fun ExtensionScreen() {
+fun ExtensionScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,7 +43,7 @@ fun ExtensionScreen() {
         ){
             FindRoomUI()
         }
-        AddRoomUI()
+        AddRoomUI(navController)
     }
 }
 
@@ -104,13 +105,16 @@ fun FindRoomUI() {
 }
 
 @Composable
-fun AddRoomUI() {
+fun AddRoomUI(navController: NavController) {
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color.White,
         modifier = Modifier
             .height(170.dp)
-            .width(170.dp),
+            .width(170.dp)
+            .clickable {
+                navController.navigate("add")
+            },
     ) {
         Column (
             modifier = Modifier
