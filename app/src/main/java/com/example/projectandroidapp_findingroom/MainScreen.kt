@@ -86,7 +86,7 @@ fun MainScreen(modifier: Modifier = Modifier, navController: NavController, auth
                             selectedTextColor = colorResource(R.color.white),
                             unselectedIconColor = colorResource(R.color.black), // bạn cần thêm màu này vào `colors.xml`
                             unselectedTextColor = colorResource(R.color.black),
-                            indicatorColor = colorResource(R.color.checkbox_color)
+                            indicatorColor = colorResource(R.color.main_color)
                         )
                     )
                 }

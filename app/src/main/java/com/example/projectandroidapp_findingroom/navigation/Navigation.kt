@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.firestore.RoomViewModel
 import com.example.projectandroidapp_findingroom.AddRoomScreen
 import com.example.projectandroidapp_findingroom.MainScreen
 import com.example.projectandroidapp_findingroom.SplashScreen
@@ -19,11 +20,12 @@ fun Navigation() {
     val modifier = Modifier
     val navController = rememberNavController()
     val authViewModel : AuthViewModel = viewModel()
+    val roomViewModel : RoomViewModel = viewModel()
     NavHost(navController, startDestination = "splash") {
         composable("splash") { SplashScreen(navController, authViewModel) }
         composable("login") { LoginScreen(navController, authViewModel) }
         composable("register") { RegisterScreen(navController, authViewModel) }
         composable("main") { MainScreen(modifier, navController, authViewModel) }
-        composable("add") { AddRoomScreen() }
+        composable("add") { AddRoomScreen(roomViewModel, navController) }
     }
 }

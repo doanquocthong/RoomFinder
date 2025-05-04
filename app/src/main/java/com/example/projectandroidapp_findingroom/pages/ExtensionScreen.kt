@@ -33,16 +33,11 @@ fun ExtensionScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(R.color.main_color))
-            .padding(top = 80.dp),
+            .padding(top = 80.dp, bottom = 200.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround
     ){
         HeaderUI()
-        Box(
-            modifier = Modifier
-                .padding(top = 30.dp, bottom = 60.dp)
-        ){
-            FindRoomUI()
-        }
         AddRoomUI(navController)
     }
 }

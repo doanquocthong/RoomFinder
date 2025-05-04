@@ -4,7 +4,7 @@ data class Room(
     val urlImage: List<String> = emptyList(),
     val price: Int = 0,
     val address: String = "",
-    val numberOfPeople: String = "",
+    val numberOfPeople: Int = 0,
     //Detail
     val serviceFee: Int = 0,
     val cleaningFee: Int = 0,
@@ -12,17 +12,17 @@ data class Room(
     val waterFee: Int = 0,
     val protectFee: Int = 0,
     //Nội thất
-    val isInterior: Boolean = true,
-    val isSofa: Boolean = true,
-    val isRefrigerator: Boolean = true,
-    val isFridge: Boolean = true,
-    val isWaredrobe: Boolean = true,
-    val isBed: Boolean = true,
+    val hasBasicInterior: Boolean = true,
+    val hasSofa: Boolean = false,
+    val hasRefrigerator: Boolean = false,
+    val hasHotWater: Boolean = false,
+    val hasWaredrobe: Boolean = false,
+    val hasBed: Boolean = false,
     //Author
     val author: String = "",
     val description: String = "",
     //Trạng thái còn/hết
-    val state: Boolean = false,
+    val state: Boolean = true,
     val id: Int = 0,
     //Else
     val elseInterior: String = "",
