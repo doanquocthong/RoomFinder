@@ -23,7 +23,7 @@ data class Room(
     val description: String = "",
     //Trạng thái còn/hết
     val state: Boolean = true,
-    val id: Int = 0,
+    val id: String = "0",
     //Else
     val elseInterior: String = "",
 )

@@ -186,7 +186,8 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
                                     hasRefrigerator = hasRefrigerator,
                                     hasHotWater = hasHotWater,
                                     hasWaredrobe = hasWardrobe,
-                                    hasBed = hasBed
+                                    hasBed = hasBed,
+
                                 )
                             )
                         },

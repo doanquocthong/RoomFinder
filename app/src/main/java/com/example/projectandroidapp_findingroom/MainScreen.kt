@@ -26,6 +26,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.firestore.RoomViewModel
 import com.example.projectandroidapp_findingroom.navigation.NavItem
 import com.example.projectandroidapp_findingroom.pages.AccountScreen
 import com.example.projectandroidapp_findingroom.pages.ExtensionScreen
@@ -35,7 +36,7 @@ import com.example.projectandroidapp_findingroom.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel) {
+fun MainScreen(modifier: Modifier = Modifier, navController: NavController, authViewModel: AuthViewModel, roomViewModel: RoomViewModel) {
     val navItemList = listOf(
         NavItem("Trang chủ", painterResource(R.drawable.baseline_home_filled_24), 0),
         NavItem("Công cụ", painterResource(R.drawable.baseline_extension_24), 0),
@@ -95,18 +96,19 @@ fun MainScreen(modifier: Modifier = Modifier, navController: NavController, auth
     ) { innerPadding ->
         ContentScreen(
             modifier = Modifier.padding(innerPadding),
+            roomViewModel = roomViewModel,
             selectedIndex = selectedIndex,
             navController = navController,
-            authViewModel = authViewModel
+            authViewModel = authViewModel,
         )
     }
 }
 
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int, navController: NavController, authViewModel: AuthViewModel) {
+fun ContentScreen(modifier: Modifier = Modifier,roomViewModel: RoomViewModel, selectedIndex : Int, navController: NavController, authViewModel: AuthViewModel) {
     when(selectedIndex){
-        0-> HomeScreen(navController)
+        0-> HomeScreen(roomViewModel, navController)
         1-> ExtensionScreen(navController)
         2-> NotificationScreen()
         3-> AccountScreen(navController, authViewModel)
