@@ -52,13 +52,13 @@ fun HeaderUI() {
             painter = painterResource(R.drawable.home_img),
             contentDescription = null,
             modifier = Modifier
-                .size(150.dp)
+                .size(100.dp)
         )
         Text(
             text = "Tìm Nhà Trọ",
             modifier = Modifier
                 .padding(top = 20.dp, bottom = 20.dp),
-            fontSize = 30.sp,
+            fontSize = 25.sp,
             fontFamily = fontFamily,
             fontWeight = FontWeight.Bold
         )
