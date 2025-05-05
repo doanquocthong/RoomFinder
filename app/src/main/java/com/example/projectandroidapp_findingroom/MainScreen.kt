@@ -110,7 +110,7 @@ fun ContentScreen(modifier: Modifier = Modifier,roomViewModel: RoomViewModel, se
     when(selectedIndex){
         0-> HomeScreen(roomViewModel, navController)
         1-> ExtensionScreen(navController)
-        2-> NotificationScreen()
+        2-> NotificationScreen(navController)
         3-> AccountScreen(navController, authViewModel)
     }
 }

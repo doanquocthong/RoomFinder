@@ -52,7 +52,7 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
     var price by remember { mutableStateOf(TextFieldValue("")) }
     var address by remember { mutableStateOf(TextFieldValue("")) }
     var numberOfPeople by remember { mutableStateOf(TextFieldValue("")) }
-    var serviceFee by remember { mutableStateOf(TextFieldValue("")) }
+    var internetFee by remember { mutableStateOf(TextFieldValue("")) }
     var cleaningFee by remember { mutableStateOf(TextFieldValue("")) }
     var electricFee by remember { mutableStateOf(TextFieldValue("")) }
     var waterFee by remember { mutableStateOf(TextFieldValue("")) }
@@ -107,7 +107,10 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
     Box(modifier = Modifier.fillMaxSize()) {
         val scrollState = rememberScrollState()
         Column(modifier = Modifier.verticalScroll(scrollState)) {
-            HeaderRecycling("THÊM PHÒNG")
+            com.example.projectandroidapp_findingroom.pages.HeaderRecycling(
+                "Chi tiết phòng",
+                navController
+            )
             BodyAddScreen(
                 imageUris = imageUris,
                 description = description,
@@ -118,8 +121,8 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
                 onAddressChange = { address = it },
                 numberOfPeople = numberOfPeople,
                 onPeopleChange = { numberOfPeople = it },
-                serviceFee = serviceFee,
-                onServiceChange = { serviceFee = it },
+                internetFee = internetFee,
+                onServiceChange = { internetFee = it },
                 cleaningFee = cleaningFee,
                 onCleaningChange = { cleaningFee = it },
                 electricFee = electricFee,
@@ -176,7 +179,7 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
                                     price = price.text.toIntOrNull() ?: 0,
                                     address = address.text,
                                     numberOfPeople = numberOfPeople.text.toIntOrNull() ?: 0,
-                                    serviceFee = serviceFee.text.toIntOrNull() ?: 0,
+                                    internetFee = internetFee.text.toIntOrNull() ?: 0,
                                     cleaningFee = cleaningFee.text.toIntOrNull() ?: 0,
                                     electricFee = electricFee.text.toIntOrNull() ?: 0,
                                     waterFee = waterFee.text.toIntOrNull() ?: 0,
@@ -212,7 +215,7 @@ fun BodyAddScreen(
     onAddressChange: (TextFieldValue) -> Unit,
     numberOfPeople: TextFieldValue,
     onPeopleChange: (TextFieldValue) -> Unit,
-    serviceFee: TextFieldValue,
+    internetFee: TextFieldValue,
     onServiceChange: (TextFieldValue) -> Unit,
     cleaningFee: TextFieldValue,
     onCleaningChange: (TextFieldValue) -> Unit,
@@ -287,8 +290,8 @@ fun BodyAddScreen(
         TextFieldOutlined(address, onAddressChange)
         SectionText("Số người ở")
         TextFieldOutlined(numberOfPeople, onPeopleChange)
-        SectionText("Phí dịch vụ")
-        TextFieldOutlined(serviceFee, onServiceChange)
+        SectionText("Tiền mạng /tháng")
+        TextFieldOutlined(internetFee, onServiceChange)
         SectionText("Phí vệ sinh")
         TextFieldOutlined(cleaningFee, onCleaningChange)
         SectionText("Giá điện")

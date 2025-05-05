@@ -6,7 +6,7 @@ data class Room(
     val address: String = "",
     val numberOfPeople: Int = 0,
     //Detail
-    val serviceFee: Int = 0,
+    val internetFee: Int = 0,
     val cleaningFee: Int = 0,
     val electricFee: Int = 0,
     val waterFee: Int = 0,

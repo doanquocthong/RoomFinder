@@ -48,25 +48,31 @@ import com.example.projectandroidapp_findingroom.ui.theme.fontFamily
 @Composable
 fun HomeScreen(roomViewModel: RoomViewModel, navController: NavController) {
     val roomList by roomViewModel.roomList.collectAsState()
+    var searchInput by remember { mutableStateOf(TextFieldValue("")) }
+
+    // Lọc danh sách phòng theo địa chỉ
+    val filteredList = roomList.filter {
+        it.address.contains(searchInput.text.trim(), ignoreCase = true)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(bottom = 100.dp)
-    ){
-        HeaderHomeScreen()
-        LazyColumn (modifier = Modifier.fillMaxHeight()){
-            items(roomList.size) { index ->
-                CardRoom(room = roomList[index], roomViewModel, navController)
+    ) {
+        HeaderHomeScreen(searchInput) { newValue ->
+            searchInput = newValue
+        }
+        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+            items(filteredList.size) { index ->
+                CardRoom(room = filteredList[index], roomViewModel, navController)
             }
         }
-
     }
 }
 
 @Composable
-fun HeaderHomeScreen() {
-    var searchInput by remember { mutableStateOf(TextFieldValue(""))}
+fun HeaderHomeScreen(searchInput: TextFieldValue, onSearchInputChange: (TextFieldValue) -> Unit) {
     Surface(
         color = colorResource(R.color.main_color),
         modifier = Modifier
@@ -75,10 +81,8 @@ fun HeaderHomeScreen() {
     ) {
         TextField(
             value = searchInput,
-            onValueChange = {
-                searchInput = it
-            },
-            placeholder = { Text("Tìm kiếm") },
+            onValueChange = onSearchInputChange,
+            placeholder = { Text("Tìm kiếm địa chỉ...") },
             textStyle = TextStyle(
                 fontFamily = fontFamily,
                 color = Color.Gray,

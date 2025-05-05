@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,14 +52,15 @@ fun HeaderUI() {
             painter = painterResource(R.drawable.home_img),
             contentDescription = null,
             modifier = Modifier
-                .size(100.dp)
+                .size(150.dp)
         )
         Text(
             text = "Tìm Nhà Trọ",
             modifier = Modifier
                 .padding(top = 20.dp, bottom = 20.dp),
-            fontSize = 25.sp,
-            fontFamily = fontFamily
+            fontSize = 30.sp,
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold
         )
     }
 
@@ -105,8 +107,8 @@ fun AddRoomUI(navController: NavController) {
         shape = RoundedCornerShape(30.dp),
         color = Color.White,
         modifier = Modifier
-            .height(170.dp)
-            .width(170.dp)
+            .height(250.dp)
+            .width(250.dp)
             .clickable {
                 navController.navigate("add")
             },
@@ -120,15 +122,16 @@ fun AddRoomUI(navController: NavController) {
             Text(
                 text = "Thêm phòng",
                 modifier = Modifier
-                    .padding(),
-                fontSize = 20.sp,
-                fontFamily = fontFamily
+                    .padding(top = 20.dp),
+                fontSize = 30.sp,
+                fontFamily = fontFamily,
+                fontWeight = FontWeight.Bold
             )
             Image(
                 painter = painterResource(R.drawable.baseline_add_home_24),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(200.dp)
             )
         }
 
