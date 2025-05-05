@@ -10,14 +10,13 @@ import kotlinx.coroutines.flow.asStateFlow
 // Định nghĩa sealed class để đại diện cho trạng thái thêm phòng
 sealed class AddRoomState {
     object Idle : AddRoomState()
-    object Success : AddRoomState()
+    data class Success(val roomId: String) : AddRoomState() // Thêm roomId
     data class Error(val message: String) : AddRoomState()
 }
 
 class RoomViewModel : ViewModel() {
     private var _roomList = MutableStateFlow<List<Room>>(emptyList())
     val roomList = _roomList.asStateFlow()
-
     // StateFlow để theo dõi trạng thái thêm phòng
     private var _addRoomState = MutableStateFlow<AddRoomState>(AddRoomState.Idle)
     val addRoomState = _addRoomState.asStateFlow()
@@ -50,7 +49,9 @@ class RoomViewModel : ViewModel() {
             .add(room)
             .addOnSuccessListener { documentReference ->
                 Log.d("RoomViewModel", "Room added with ID: ${documentReference.id}")
-                _addRoomState.value = AddRoomState.Success
+                val roomId = documentReference.id
+                documentReference.update("id", roomId)
+                _addRoomState.value = AddRoomState.Success(roomId)
             }
             .addOnFailureListener { e ->
                 Log.w("RoomViewModel", "Error adding room: ${e.message}", e)

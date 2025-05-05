@@ -63,14 +63,12 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
     var hasHotWater by remember { mutableStateOf(false) }
     var hasWardrobe by remember { mutableStateOf(false) }
     var hasBed by remember { mutableStateOf(false) }
-
-    // Lắng nghe trạng thái thêm phòng
     LaunchedEffect(Unit) {
         roomViewModel.addRoomState.collectLatest { state ->
             when (state) {
                 is AddRoomState.Success -> {
+                    val roomId = state.roomId
                     Toast.makeText(context, "Phòng đã được thêm thành công", Toast.LENGTH_SHORT).show()
-
                     roomViewModel.resetAddRoomState()
                 }
                 is AddRoomState.Error -> {
@@ -81,6 +79,8 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
             }
         }
     }
+    // Lắng nghe trạng thái thêm phòng
+
 
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         imageUris = imageUris + uris

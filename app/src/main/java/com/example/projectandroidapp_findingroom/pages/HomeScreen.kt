@@ -164,7 +164,6 @@ fun CardRoom(room: Room, roomViewModel: RoomViewModel, navController: NavControl
                         color = Color.Black,
                         textAlign = TextAlign.Center,
                         fontFamily = fontFamily
-
                     )
                 }
             }
