@@ -108,12 +108,12 @@ fun CardNotifi(){
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .height(100.dp)
-            .border(2.dp,Color.Red,RoundedCornerShape(30))
+            .height(80.dp)
+            .border(2.dp,Color.Gray,RoundedCornerShape(30))
             .clip(shape = RoundedCornerShape(30))
         ) {
         Row (
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(20.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -121,12 +121,14 @@ fun CardNotifi(){
             painter = painterResource(R.drawable.baseline_notifications_24),
             contentDescription = null,
             tint = colorResource(R.color.main_color),
-            modifier = Modifier.size(60.dp)
-
+            modifier = Modifier.size(40.dp)
+                .padding()
         )
         Text(
             text = "Bạn chưa có thông báo",
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            modifier = Modifier
+                .padding(start = 20.dp)
         )
     }
     }

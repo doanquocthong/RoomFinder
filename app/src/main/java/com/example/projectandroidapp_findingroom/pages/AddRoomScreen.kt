@@ -39,10 +39,12 @@ import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.example.firestore.AddRoomState
 import com.example.firestore.RoomViewModel
+import com.example.projectandroidapp_findingroom.viewmodel.AuthViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
+fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController, authViewModel: AuthViewModel) {
     val context = LocalContext.current
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var isUploading by remember { mutableStateOf(false) }
@@ -63,6 +65,8 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
     var hasHotWater by remember { mutableStateOf(false) }
     var hasWardrobe by remember { mutableStateOf(false) }
     var hasBed by remember { mutableStateOf(false) }
+    var telephoneNumber by remember { mutableStateOf(TextFieldValue("")) }
+    val user = FirebaseAuth.getInstance().currentUser
     LaunchedEffect(Unit) {
         roomViewModel.addRoomState.collectLatest { state ->
             when (state) {
@@ -143,6 +147,8 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
                 onWardrobeChange = { hasWardrobe = it },
                 hasBed = hasBed,
                 onBedChange = { hasBed = it },
+                telephoneNumber = telephoneNumber,
+                onTelephoneNumber = {telephoneNumber = it},
                 onAddImageClick = requestPermission
             )
             ButtonAdd(
@@ -176,21 +182,22 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController) {
                                 Room(
                                     urlImage = imageUrls,
                                     description = description.text,
-                                    price = price.text.toIntOrNull() ?: 0,
+                                    price = price.text,
                                     address = address.text,
-                                    numberOfPeople = numberOfPeople.text.toIntOrNull() ?: 0,
-                                    internetFee = internetFee.text.toIntOrNull() ?: 0,
-                                    cleaningFee = cleaningFee.text.toIntOrNull() ?: 0,
-                                    electricFee = electricFee.text.toIntOrNull() ?: 0,
-                                    waterFee = waterFee.text.toIntOrNull() ?: 0,
-                                    protectFee = protectFee.text.toIntOrNull() ?: 0,
+                                    numberOfPeople = numberOfPeople.text,
+                                    internetFee = internetFee.text,
+                                    cleaningFee = cleaningFee.text,
+                                    electricFee = electricFee.text,
+                                    waterFee = waterFee.text,
+                                    protectFee = protectFee.text,
                                     hasBasicInterior = hasBasicInterior,
                                     hasSofa = hasSofa,
                                     hasRefrigerator = hasRefrigerator,
                                     hasHotWater = hasHotWater,
                                     hasWaredrobe = hasWardrobe,
                                     hasBed = hasBed,
-
+                                    telephoneNumber = telephoneNumber.text,
+                                    author = user?.email?.substringBefore("@") ?: "Không rõ tên"
                                 )
                             )
                         },
@@ -237,6 +244,8 @@ fun BodyAddScreen(
     onWardrobeChange: (Boolean) -> Unit,
     hasBed: Boolean,
     onBedChange: (Boolean) -> Unit,
+    telephoneNumber: TextFieldValue,
+    onTelephoneNumber: (TextFieldValue) -> Unit,
     onAddImageClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -284,25 +293,27 @@ fun BodyAddScreen(
         Spacer(modifier = Modifier.height(10.dp))
         SectionText("Mô tả")
         TextFieldOutlined(description, onDescChange)
-        SectionText("Giá")
+        SectionText("Giá/tháng (VD: 5.000.000)")
         TextFieldOutlined(price, onPriceChange)
-        SectionText("Địa chỉ")
+        SectionText("Địa chỉ chi tiết (VD: 255 Quang Trung, Gò Vấp, Phường 15, Hồ Chí Minh)")
         TextFieldOutlined(address, onAddressChange)
         SectionText("Số người ở")
         TextFieldOutlined(numberOfPeople, onPeopleChange)
-        SectionText("Tiền mạng /tháng")
+        SectionText("Tiền mạng")
         TextFieldOutlined(internetFee, onServiceChange)
         SectionText("Phí vệ sinh")
         TextFieldOutlined(cleaningFee, onCleaningChange)
-        SectionText("Giá điện")
+        SectionText("Giá điện/khối")
         TextFieldOutlined(electricFee, onElectricChange)
-        SectionText("Giá nước")
+        SectionText("Giá nước/người")
         TextFieldOutlined(waterFee, onWaterChange)
         SectionText("Phí bảo vệ")
         TextFieldOutlined(protectFee, onProtectChange)
-
+        SectionText("Số liên hệ")
+        TextFieldOutlined(telephoneNumber, onTelephoneNumber)
         SectionText("Nội thất cơ bản")
         CheckboxRow("Có nội thất", hasBasicInterior, onBasicInteriorChange)
+
         if (hasBasicInterior) {
             CheckboxRow("Sofa", hasSofa, onSofaChange)
             CheckboxRow("Tủ lạnh", hasRefrigerator, onRefrigeratorChange)

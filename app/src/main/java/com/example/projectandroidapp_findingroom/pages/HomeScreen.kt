@@ -3,7 +3,9 @@ package com.example.projectandroidapp_findingroom.pages
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,7 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,11 +55,42 @@ fun HomeScreen(roomViewModel: RoomViewModel, navController: NavController) {
     val roomList by roomViewModel.roomList.collectAsState()
     var searchInput by remember { mutableStateOf(TextFieldValue("")) }
 
-    // Lọc danh sách phòng theo địa chỉ
-    val filteredList = roomList.filter {
-        it.address.contains(searchInput.text.trim(), ignoreCase = true)
-    }
+    var selectedDistrict by remember { mutableStateOf("") }
+    val districts = listOf(
+        // Thành phố
+        "Thành phố Thủ Đức",
 
+        // Các quận nội thành
+        "Quận 1",
+        "Quận 3",
+        "Quận 4",
+        "Quận 5",
+        "Quận 6",
+        "Quận 7",
+        "Quận 8",
+        "Quận 10",
+        "Quận 11",
+        "Quận 12",
+        "Quận Bình Tân",
+        "Quận Bình Thạnh",
+        "Quận Gò Vấp",
+        "Quận Phú Nhuận",
+        "Quận Tân Bình",
+        "Quận Tân Phú",
+
+        // Các huyện ngoại thành
+        "Huyện Bình Chánh",
+        "Huyện Cần Giờ",
+        "Huyện Củ Chi",
+        "Huyện Hóc Môn",
+        "Huyện Nhà Bè"
+    )
+
+    val filteredList = roomList.filter {
+        val matchesSearch = it.address.contains(searchInput.text.trim(), ignoreCase = true)
+        val matchesDistrict = selectedDistrict.isEmpty() || it.address.contains(selectedDistrict, ignoreCase = true)
+        matchesSearch && matchesDistrict
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,11 +99,45 @@ fun HomeScreen(roomViewModel: RoomViewModel, navController: NavController) {
         HeaderHomeScreen(searchInput) { newValue ->
             searchInput = newValue
         }
+        LazyRow (modifier = Modifier.fillMaxWidth()) {
+            items(districts.size) { index ->
+                District(
+                    district = districts[index],
+                    isSelected = districts[index] == selectedDistrict,
+                    onClick = {
+                        selectedDistrict = if (selectedDistrict == districts[index]) "" else districts[index]
+                    }
+                )
+            }
+        }
         LazyColumn(modifier = Modifier.fillMaxHeight()) {
             items(filteredList.size) { index ->
                 CardRoom(room = filteredList[index], roomViewModel, navController)
             }
         }
+    }
+}
+
+@Composable
+fun District(district: String, isSelected: Boolean, onClick: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier.padding(10.dp).clickable { onClick() },
+        shadowElevation = 2.dp,
+        color = if (isSelected) Color.Gray else Color.White
+    ) {
+        Box(
+            modifier = Modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                "${district}",
+                modifier = Modifier.padding(10.dp),
+                fontSize = 15.sp,
+                color = if (isSelected) Color.White else Color.Black
+            )
+        }
+
     }
 }
 
@@ -112,7 +182,7 @@ fun CardRoom(room: Room, roomViewModel: RoomViewModel, navController: NavControl
         shape = RoundedCornerShape(17.dp),
         shadowElevation = 10.dp,
         modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp, top = 30.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 10.dp)
             .clickable {
                 navController.navigate("detail/${room.id}")
             }
@@ -145,31 +215,22 @@ fun CardRoom(room: Room, roomViewModel: RoomViewModel, navController: NavControl
                     fontFamily = fontFamily
                 )
                 Spacer(Modifier.padding(5.dp))
-                Text(
-                    "Giá: ${price}",
-                    color = Color.Blue,
-                    fontFamily = fontFamily
-
-                )
-                Spacer(Modifier.padding(5.dp))
-                Surface (
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(17.dp)
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    shadowElevation = 2.dp,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        if (state) {
-                            "Phòng còn trống"
-                        }else "Phòng đã có người cọc",
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(),
-                        color = Color.Black,
-                        textAlign = TextAlign.Center,
-                        fontFamily = fontFamily
+                        "Giá: ${price}đ",
+                        fontFamily = fontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        modifier = Modifier.padding(10.dp).fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
                 }
+                Spacer(Modifier.padding(5.dp))
+
             }
         }
     }

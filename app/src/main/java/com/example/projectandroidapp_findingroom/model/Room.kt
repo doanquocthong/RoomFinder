@@ -2,15 +2,15 @@ package com.example.projectandroidapp_findingroom
 
 data class Room(
     val urlImage: List<String> = emptyList(),
-    val price: Int = 0,
+    val price: String = "",
     val address: String = "",
-    val numberOfPeople: Int = 0,
+    val numberOfPeople: String = "",
     //Detail
-    val internetFee: Int = 0,
-    val cleaningFee: Int = 0,
-    val electricFee: Int = 0,
-    val waterFee: Int = 0,
-    val protectFee: Int = 0,
+    val internetFee: String = "",
+    val cleaningFee: String = "",
+    val electricFee: String = "",
+    val waterFee: String = "",
+    val protectFee: String = "",
     //Nội thất
     val hasBasicInterior: Boolean = true,
     val hasSofa: Boolean = false,
@@ -26,4 +26,5 @@ data class Room(
     val id: String = "0", //1 2 3
     //Else
     val elseInterior: String = "",
+    val telephoneNumber: String = ""
 )

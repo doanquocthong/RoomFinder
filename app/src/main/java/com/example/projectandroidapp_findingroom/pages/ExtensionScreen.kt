@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,11 +27,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.firestore.RoomViewModel
 import com.example.projectandroidapp_findingroom.R
+import com.example.projectandroidapp_findingroom.Room
 import com.example.projectandroidapp_findingroom.ui.theme.fontFamily
+import com.example.projectandroidapp_findingroom.viewmodel.AuthViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ExtensionScreen(navController: NavController) {
+fun ExtensionScreen(roomViewModel: RoomViewModel,navController: NavController) {
+    val user = FirebaseAuth.getInstance().currentUser
+    val name = user?.displayName ?: "Tên không xác định"
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -39,6 +47,7 @@ fun ExtensionScreen(navController: NavController) {
         verticalArrangement = Arrangement.SpaceAround
     ){
         HeaderUI()
+        EditRoomUI(name, navController)
         AddRoomUI(navController)
     }
 }
@@ -67,14 +76,17 @@ fun HeaderUI() {
 }
 
 @Composable
-fun FindRoomUI() {
+fun EditRoomUI(name: String,navController: NavController) {
     Surface(
         shape = RoundedCornerShape(30.dp),
         color = Color.White,
         modifier = Modifier
-            .height(170.dp)
-            .width(170.dp)
-            .padding(),
+            .height(150.dp)
+            .width(150.dp)
+            .padding()
+            .clickable {
+                navController.navigate("author/${name}")
+            },
     ) {
         Column (
             modifier = Modifier
@@ -84,14 +96,14 @@ fun FindRoomUI() {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Tìm phòng",
+                text = "Sửa phòng",
                 modifier = Modifier
                     .padding(),
                 fontSize = 20.sp,
                 fontFamily = fontFamily
             )
             Image(
-                painter = painterResource(R.drawable.baseline_search_24),
+                painter = painterResource(R.drawable.baseline_edit_24),
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
@@ -107,8 +119,8 @@ fun AddRoomUI(navController: NavController) {
         shape = RoundedCornerShape(30.dp),
         color = Color.White,
         modifier = Modifier
-            .height(250.dp)
-            .width(250.dp)
+            .height(150.dp)
+            .width(150.dp)
             .clickable {
                 navController.navigate("add")
             },
@@ -123,7 +135,7 @@ fun AddRoomUI(navController: NavController) {
                 text = "Thêm phòng",
                 modifier = Modifier
                     .padding(top = 20.dp),
-                fontSize = 30.sp,
+                fontSize = 20.sp,
                 fontFamily = fontFamily,
                 fontWeight = FontWeight.Bold
             )
@@ -131,7 +143,7 @@ fun AddRoomUI(navController: NavController) {
                 painter = painterResource(R.drawable.baseline_add_home_24),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(100.dp)
             )
         }
 

@@ -58,6 +58,34 @@ class RoomViewModel : ViewModel() {
                 _addRoomState.value = AddRoomState.Error(e.message ?: "Lỗi không xác định")
             }
     }
+    fun deleteRoom(roomId: String) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("rooms")
+            .document(roomId)
+            .delete()
+            .addOnSuccessListener {
+                Log.d("RoomViewModel", "Room deleted with ID: $roomId")
+            }
+            .addOnFailureListener { e ->
+                Log.w("RoomViewModel", "Error deleting room: ${e.message}", e)
+            }
+    }
+
+    fun updateRoom(roomId: String, updatedRoom: Room) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("rooms")
+            .document(roomId)
+            .set(updatedRoom) // Sử dụng set để ghi đè toàn bộ document
+            .addOnSuccessListener {
+                Log.d("RoomViewModel", "Room updated with ID: $roomId")
+            }
+            .addOnFailureListener { e ->
+                Log.w("RoomViewModel", "Error updating room: ${e.message}", e)
+            }
+    }
+
 
     // Hàm để reset trạng thái thêm phòng
     fun resetAddRoomState() {

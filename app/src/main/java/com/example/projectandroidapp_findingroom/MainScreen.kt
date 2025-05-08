@@ -106,10 +106,10 @@ fun MainScreen(modifier: Modifier = Modifier, navController: NavController, auth
 
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier,roomViewModel: RoomViewModel, selectedIndex : Int, navController: NavController, authViewModel: AuthViewModel) {
+fun ContentScreen(modifier: Modifier = Modifier, roomViewModel: RoomViewModel, selectedIndex : Int, navController: NavController, authViewModel: AuthViewModel) {
     when(selectedIndex){
         0-> HomeScreen(roomViewModel, navController)
-        1-> ExtensionScreen(navController)
+        1-> ExtensionScreen(roomViewModel,navController)
         2-> NotificationScreen(navController)
         3-> AccountScreen(navController, authViewModel)
     }

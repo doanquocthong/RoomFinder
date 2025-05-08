@@ -1,5 +1,7 @@
 package com.example.projectandroidapp_findingroom.pages
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -80,7 +82,7 @@ fun DetailRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavC
                 modifier = Modifier.padding(10.dp)
             )
             Text(
-                text = "Giá: " + room.price.toString() + "đ",
+                text = "Giá: " + room.price,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
                 color = colorResource(R.color.teal_700),
@@ -92,14 +94,16 @@ fun DetailRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavC
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.local),
+                    painter = painterResource(R.drawable.baseline_location_on_24),
                     contentDescription = null,
-                    tint = colorResource(R.color.main_color)
+                    tint = colorResource(R.color.main_color),
+                    modifier = Modifier
+                        .size(40.dp)
                 )
                 Text(
                     text = room.address,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(start = 5.dp)
+                    modifier = Modifier.padding(start = 10.dp)
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -107,14 +111,16 @@ fun DetailRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavC
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.__icon__clock_),
+                    painter = painterResource(R.drawable.baseline_people_outline_24),
                     contentDescription = null,
-                    tint = colorResource(R.color.teal_200)
+                    tint = colorResource(R.color.teal_200),
+                    modifier = Modifier
+                        .size(40.dp)
                 )
                 Text(
                     text = "Phù hợp " + room.numberOfPeople.toString() + " người ở",
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(start = 5.dp)
+                    modifier = Modifier.padding(start = 10.dp)
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -144,7 +150,7 @@ fun DetailRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavC
             ) {
                 ServiceItem(R.drawable.wifi, "Internet ${room.internetFee}/tháng")
                 ServiceItem(R.drawable.trash, "Vệ sinh ${room.cleaningFee}/tháng")
-                ServiceItem(R.drawable.__icon__bolt_, "Điện ${room.electricFee}/W")
+                ServiceItem(R.drawable.__icon__bolt_, "Điện ${room.electricFee}k/khối")
             }
             Row(
                 modifier = Modifier
@@ -153,7 +159,7 @@ fun DetailRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavC
                     .padding(10.dp),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                ServiceItem(R.drawable.__icon__water_, "Nước ${room.waterFee}/khối")
+                ServiceItem(R.drawable.__icon__water_, "Nước ${room.waterFee}/người")
                 ServiceItem(R.drawable.__icon__shield_, "Bảo vệ ${room.protectFee}/tháng")
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -198,6 +204,7 @@ fun DetailRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavC
                 }
             }
         }
+            ButtonHotline("0945946668")
     }
     }
 }
@@ -334,6 +341,32 @@ fun ServiceItem(iconResId: Int, label: String) {
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
+fun ButtonHotline(telephoneNumber: String) {
+    val context = LocalContext.current
+
+    Button(
+        onClick = {
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                data = Uri.parse("tel:$telephoneNumber")
+            }
+            context.startActivity(intent)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, bottom = 40.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(R.color.black)
+        )
+    ) {
+        Text(
+            text = "Liên hệ: $telephoneNumber",
+            modifier = Modifier.padding(10.dp),
+            fontSize = 20.sp,
         )
     }
 }
