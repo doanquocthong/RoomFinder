@@ -111,7 +111,7 @@ fun CardRoomForEdit(room: Room, roomViewModel: RoomViewModel, navController: Nav
         shape = RoundedCornerShape(17.dp),
         shadowElevation = 10.dp,
         modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 30.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 30.dp)
             .clickable {
                 navController.navigate("edit/${room.id}")
             }
