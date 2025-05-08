@@ -77,6 +77,7 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) {
     val authState = authViewModel.authState.observeAsState()
     val context = LocalContext.current
     var passwordVisible by remember { mutableStateOf(false) }
+    var onchecked by remember { mutableStateOf(false) }
 
     LaunchedEffect(authState.value) {
         when(authState.value){
@@ -174,14 +175,15 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel) {
             Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    checked = false,
+                    checked = onchecked,
                     onCheckedChange = {
+                        onchecked = !onchecked
                         passwordVisible=!passwordVisible
                     },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = colorResource(R.color.white),
+                        checkedColor = colorResource(R.color.checkbox_color),
                         uncheckedColor = colorResource(R.color.checkbox_color),
-                        checkmarkColor = Color.White
+                        checkmarkColor = Color.Black
                     )
                 )
                 Text(

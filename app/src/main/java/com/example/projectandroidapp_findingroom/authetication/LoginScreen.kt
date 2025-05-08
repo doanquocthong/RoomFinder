@@ -74,6 +74,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
             else -> Unit
         }
     }
+    var onchecked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -142,14 +143,15 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel) {
             Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    checked = false,
+                    checked = onchecked,
                     onCheckedChange = {
+                        onchecked = !onchecked
                         passwordVisible=!passwordVisible
                     },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = colorResource(R.color.white),
+                        checkedColor = colorResource(R.color.checkbox_color),
                         uncheckedColor = colorResource(R.color.checkbox_color),
-                        checkmarkColor = Color.White
+                        checkmarkColor = Color.Black
                     )
                 )
                 Text(
