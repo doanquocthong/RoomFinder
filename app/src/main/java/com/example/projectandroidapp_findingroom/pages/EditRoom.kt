@@ -73,8 +73,8 @@ fun EditRoom(roomId: String,roomViewModel: RoomViewModel, navController: NavCont
 
     // Trạng thái các trường
     if (room == null) {
-        Text("Không tìm thấy thông tin phòng.")
-        return
+        Text("Xóa phòng thành công.")
+        return navController.navigate("main")
     }
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var description by remember { mutableStateOf(TextFieldValue("${room.description}")) }
