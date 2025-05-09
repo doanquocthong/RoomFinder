@@ -48,7 +48,7 @@ fun NotificationScreen(navController: NavController) {
             .fillMaxSize(),
     ){
         Column {
-            HeaderRecycling("Thông báo", navController)
+            HeaderRecycling("Thông báo", navController, "main")
         LazyColumn {
             items (10){
                 CardNotifi()
@@ -60,7 +60,7 @@ fun NotificationScreen(navController: NavController) {
 
 
 @Composable
-fun HeaderRecycling(text: String, navController: NavController) {
+fun HeaderRecycling(text: String, navController: NavController, route: String) {
     Surface(
         color = colorResource(R.color.main_color),
         modifier = Modifier
@@ -78,7 +78,7 @@ fun HeaderRecycling(text: String, navController: NavController) {
                     .width(40.dp)
                     .height(40.dp)
                     .clickable {
-                        navController.popBackStack()
+                        navController.navigate("$route")
                     },
                 shape = RoundedCornerShape(10.dp)
             ) {

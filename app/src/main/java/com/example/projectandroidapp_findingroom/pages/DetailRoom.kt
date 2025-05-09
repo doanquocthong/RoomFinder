@@ -48,7 +48,7 @@ fun DetailRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavC
         )
         return
     }
-    HeaderRecycling("Chi tiết phòng",navController)
+    HeaderRecycling("Chi tiết phòng",navController, "main")
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

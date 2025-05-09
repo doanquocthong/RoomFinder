@@ -96,13 +96,13 @@ fun Profile(navController: NavController, authViewModel: AuthViewModel){
                 )
             }
             Text(
-                text = "Tên : $displayName",
+                text = "Tên: $displayName",
                 fontSize = 18.sp,
                 fontFamily = fontFamily,
                 modifier = Modifier.padding(10.dp)
             )
             Text(
-                text = "Email : $email",
+                text = "Email: $email",
                 fontSize = 18.sp,
                 modifier = Modifier.padding(10.dp)
             )

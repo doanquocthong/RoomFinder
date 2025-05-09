@@ -71,19 +71,22 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController, au
         roomViewModel.addRoomState.collectLatest { state ->
             when (state) {
                 is AddRoomState.Success -> {
-                    val roomId = state.roomId
+                    isUploading = false
                     Toast.makeText(context, "Phòng đã được thêm thành công", Toast.LENGTH_SHORT).show()
                     roomViewModel.resetAddRoomState()
+                    navController.navigate("main")
                 }
                 is AddRoomState.Error -> {
-                    Toast.makeText(context, "Lỗi: ${state.message}", Toast.LENGTH_SHORT).show()
+                    isUploading = false
+                    Toast.makeText(context, "Lỗi khi thêm phòng: ${state.message}", Toast.LENGTH_SHORT).show()
                     roomViewModel.resetAddRoomState()
                 }
-                is AddRoomState.Idle -> {}
+                is AddRoomState.Idle -> {
+                    isUploading = false
+                }
             }
         }
     }
-    // Lắng nghe trạng thái thêm phòng
 
 
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
@@ -113,7 +116,8 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController, au
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             com.example.projectandroidapp_findingroom.pages.HeaderRecycling(
                 "Chi tiết phòng",
-                navController
+                navController,
+                "main"
             )
             BodyAddScreen(
                 imageUris = imageUris,
@@ -177,7 +181,6 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController, au
                                 Toast.makeText(context, "Không có ảnh nào được tải lên", Toast.LENGTH_SHORT).show()
                                 return@uploadImagesToCloudinary
                             }
-                            navController.navigate("main")
                             roomViewModel.addRoom(
                                 Room(
                                     urlImage = imageUrls,

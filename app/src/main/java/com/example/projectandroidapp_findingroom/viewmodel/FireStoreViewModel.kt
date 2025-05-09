@@ -2,93 +2,133 @@ package com.example.firestore
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.projectandroidapp_findingroom.Room
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
-// Định nghĩa sealed class để đại diện cho trạng thái thêm phòng
+// Định nghĩa sealed class cho trạng thái thêm phòng
 sealed class AddRoomState {
     object Idle : AddRoomState()
-    data class Success(val roomId: String) : AddRoomState() // Thêm roomId
+    data class Success(val roomId: String) : AddRoomState()
     data class Error(val message: String) : AddRoomState()
 }
 
+// Định nghĩa sealed class cho trạng thái xóa phòng
+sealed class DeleteRoomState {
+    object Idle : DeleteRoomState()
+    object Loading : DeleteRoomState()
+    object Success : DeleteRoomState()
+    data class Error(val message: String) : DeleteRoomState()
+}
+
+// Định nghĩa sealed class cho trạng thái cập nhật phòng
+sealed class UpdateRoomState {
+    object Idle : UpdateRoomState()
+    data class Success(val roomId: String) : UpdateRoomState()
+    data class Error(val message: String) : UpdateRoomState()
+}
+
 class RoomViewModel : ViewModel() {
-    private var _roomList = MutableStateFlow<List<Room>>(emptyList())
+    private val _roomList = MutableStateFlow<List<Room>>(emptyList())
     val roomList = _roomList.asStateFlow()
-    // StateFlow để theo dõi trạng thái thêm phòng
-    private var _addRoomState = MutableStateFlow<AddRoomState>(AddRoomState.Idle)
+
+    // StateFlow cho các trạng thái
+    private val _addRoomState = MutableStateFlow<AddRoomState>(AddRoomState.Idle)
     val addRoomState = _addRoomState.asStateFlow()
+
+    private val _deleteRoomState = MutableStateFlow<DeleteRoomState>(DeleteRoomState.Idle)
+    val deleteRoomState = _deleteRoomState.asStateFlow()
+
+    private val _updateRoomState = MutableStateFlow<UpdateRoomState>(UpdateRoomState.Idle)
+    val updateRoomState = _updateRoomState.asStateFlow()
+
+    private val db = FirebaseFirestore.getInstance()
 
     init {
         getRoomList()
     }
 
+    // Lấy danh sách phòng từ Firestore
     fun getRoomList() {
-        val db = FirebaseFirestore.getInstance()
-
         db.collection("rooms")
             .addSnapshotListener { value, error ->
                 if (error != null) {
-                    Log.d("RoomViewModel", "Firestore error: ${error.message}")
+                    Log.e("RoomViewModel", "Firestore error: ${error.message}", error)
                     return@addSnapshotListener
                 }
 
                 if (value != null) {
-                    _roomList.value = value.toObjects(Room::class.java)
-                    Log.d("RoomViewModel", "Firestore value")
+                    val rooms = value.toObjects(Room::class.java).map { room ->
+                        room.id = value.documents.find { it.toObject(Room::class.java) == room }?.id ?: ""
+                        room
+                    }
+                    _roomList.value = rooms
+                    Log.d("RoomViewModel", "Fetched ${rooms.size} rooms")
                 }
             }
     }
 
+    // Thêm phòng mới
     fun addRoom(room: Room) {
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("rooms")
-            .add(room)
-            .addOnSuccessListener { documentReference ->
-                Log.d("RoomViewModel", "Room added with ID: ${documentReference.id}")
+        viewModelScope.launch {
+            try {
+                val documentReference = db.collection("rooms").add(room).await()
                 val roomId = documentReference.id
-                documentReference.update("id", roomId)
+                // Cập nhật roomId vào tài liệu
+                documentReference.update("id", roomId).await()
+                Log.d("RoomViewModel", "Room added with ID: $roomId")
                 _addRoomState.value = AddRoomState.Success(roomId)
-            }
-            .addOnFailureListener { e ->
-                Log.w("RoomViewModel", "Error adding room: ${e.message}", e)
+            } catch (e: Exception) {
+                Log.e("RoomViewModel", "Error adding room: ${e.message}", e)
                 _addRoomState.value = AddRoomState.Error(e.message ?: "Lỗi không xác định")
             }
+        }
     }
+
+    // Xóa phòng
     fun deleteRoom(roomId: String) {
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("rooms")
-            .document(roomId)
-            .delete()
-            .addOnSuccessListener {
+        viewModelScope.launch {
+            _deleteRoomState.value = DeleteRoomState.Loading
+            try {
+                db.collection("rooms").document(roomId).delete().await()
                 Log.d("RoomViewModel", "Room deleted with ID: $roomId")
+                _deleteRoomState.value = DeleteRoomState.Success
+            } catch (e: Exception) {
+                Log.e("RoomViewModel", "Error deleting room: ${e.message}", e)
+                _deleteRoomState.value = DeleteRoomState.Error(e.message ?: "Lỗi khi xóa phòng")
             }
-            .addOnFailureListener { e ->
-                Log.w("RoomViewModel", "Error deleting room: ${e.message}", e)
-            }
+        }
     }
 
+    // Cập nhật phòng
     fun updateRoom(roomId: String, updatedRoom: Room) {
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("rooms")
-            .document(roomId)
-            .set(updatedRoom) // Sử dụng set để ghi đè toàn bộ document
-            .addOnSuccessListener {
+        viewModelScope.launch {
+            try {
+                updatedRoom.id = roomId
+                db.collection("rooms").document(roomId).set(updatedRoom).await()
                 Log.d("RoomViewModel", "Room updated with ID: $roomId")
+                _updateRoomState.value = UpdateRoomState.Success(roomId)
+            } catch (e: Exception) {
+                Log.e("RoomViewModel", "Error updating room: ${e.message}", e)
+                _updateRoomState.value = UpdateRoomState.Error(e.message ?: "Lỗi khi cập nhật phòng")
             }
-            .addOnFailureListener { e ->
-                Log.w("RoomViewModel", "Error updating room: ${e.message}", e)
-            }
+        }
     }
 
-
-    // Hàm để reset trạng thái thêm phòng
+    // Reset trạng thái
     fun resetAddRoomState() {
         _addRoomState.value = AddRoomState.Idle
+    }
+
+    fun resetDeleteRoomState() {
+        _deleteRoomState.value = DeleteRoomState.Idle
+    }
+
+    fun resetUpdateRoomState() {
+        _updateRoomState.value = UpdateRoomState.Idle
     }
 }

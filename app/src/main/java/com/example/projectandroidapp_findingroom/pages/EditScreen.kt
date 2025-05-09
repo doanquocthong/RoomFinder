@@ -59,7 +59,7 @@ fun EditScreen(name: String,roomViewModel: RoomViewModel, navController: NavCont
     val authorList = roomList.filter { it.author == displayName }
     if (authorList.isEmpty()) {
         Column {
-            HeaderRecycling("Chỉnh sửa phòng", navController)
+            HeaderRecycling("Chỉnh sửa phòng", navController, "main")
             Column (
                 modifier = Modifier
                     .fillMaxSize()
@@ -90,7 +90,7 @@ fun EditScreen(name: String,roomViewModel: RoomViewModel, navController: NavCont
                 .fillMaxSize()
                 .padding(bottom = 0.dp)
         ) {
-            HeaderRecycling("Chỉnh sửa phòng", navController)
+            HeaderRecycling("Chỉnh sửa phòng", navController, "main")
             LazyColumn(modifier = Modifier.fillMaxHeight().padding(bottom = 0.dp)) {
                 items(authorList.size) { index ->
                     CardRoomForEdit(room = authorList[index], roomViewModel, navController)

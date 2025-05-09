@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,11 +47,11 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.example.firestore.AddRoomState
+import com.example.firestore.DeleteRoomState
 import com.example.firestore.RoomViewModel
-import com.example.projectandroidapp_findingroom.BodyAddScreen
-import com.example.projectandroidapp_findingroom.ButtonAdd
+import com.example.firestore.UpdateRoomState
 import com.example.projectandroidapp_findingroom.CheckboxRow
 import com.example.projectandroidapp_findingroom.R
 import com.example.projectandroidapp_findingroom.Room
@@ -61,62 +61,99 @@ import com.example.projectandroidapp_findingroom.isNetworkAvailable
 import com.example.projectandroidapp_findingroom.uploadImagesToCloudinary
 import com.example.projectandroidapp_findingroom.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
-fun EditRoom(roomId: String,roomViewModel: RoomViewModel, navController: NavController, authViewModel: AuthViewModel) {
+fun EditRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavController, authViewModel: AuthViewModel) {
     val context = LocalContext.current
     val roomList by roomViewModel.roomList.collectAsState()
     val room = roomList.find { it.id == roomId }
-
     var isUploading by remember { mutableStateOf(false) }
+    val user = FirebaseAuth.getInstance().currentUser
+    val displayName = user?.email?.substringBefore("@") ?: "Không rõ tên"
+    // Kiểm tra nếu phòng không tồn tại
+    if (room == null) {
+        Text("Phòng không tồn tại hoặc đã bị xóa.")
+        LaunchedEffect(Unit) {
+            navController.navigate("author/${displayName}")
+        }
+        return
+    }
 
     // Trạng thái các trường
-    if (room == null) {
-        Text("Xóa phòng thành công.")
-        return navController.navigate("main")
-    }
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
-    var description by remember { mutableStateOf(TextFieldValue("${room.description}")) }
-    var price by remember { mutableStateOf(TextFieldValue("${room.price}")) }
-    var address by remember { mutableStateOf(TextFieldValue("${room.address}")) }
-    var numberOfPeople by remember { mutableStateOf(TextFieldValue("${room.numberOfPeople}")) }
-    var internetFee by remember { mutableStateOf(TextFieldValue("${room.internetFee}")) }
-    var cleaningFee by remember { mutableStateOf(TextFieldValue("${room.cleaningFee}")) }
-    var electricFee by remember { mutableStateOf(TextFieldValue("${room.electricFee}")) }
-    var waterFee by remember { mutableStateOf(TextFieldValue("${room.waterFee}")) }
-    var protectFee by remember { mutableStateOf(TextFieldValue("${room.protectFee}")) }
+    var description by remember { mutableStateOf(TextFieldValue(room.description)) }
+    var price by remember { mutableStateOf(TextFieldValue(room.price)) }
+    var address by remember { mutableStateOf(TextFieldValue(room.address)) }
+    var numberOfPeople by remember { mutableStateOf(TextFieldValue(room.numberOfPeople)) }
+    var internetFee by remember { mutableStateOf(TextFieldValue(room.internetFee)) }
+    var cleaningFee by remember { mutableStateOf(TextFieldValue(room.cleaningFee)) }
+    var electricFee by remember { mutableStateOf(TextFieldValue(room.electricFee)) }
+    var waterFee by remember { mutableStateOf(TextFieldValue(room.waterFee)) }
+    var protectFee by remember { mutableStateOf(TextFieldValue(room.protectFee)) }
     var hasBasicInterior by remember { mutableStateOf(room.hasBasicInterior) }
     var hasSofa by remember { mutableStateOf(room.hasSofa) }
     var hasRefrigerator by remember { mutableStateOf(room.hasRefrigerator) }
     var hasHotWater by remember { mutableStateOf(room.hasHotWater) }
     var hasWardrobe by remember { mutableStateOf(room.hasWaredrobe) }
     var hasBed by remember { mutableStateOf(room.hasBed) }
-    var telephoneNumber by remember { mutableStateOf(TextFieldValue("${room.telephoneNumber}"))}
-    val user = FirebaseAuth.getInstance().currentUser
-    val displayName = user?.email?.substringBefore("@") ?: "Không rõ tên"
+    var telephoneNumber by remember { mutableStateOf(TextFieldValue(room.telephoneNumber)) }
+
+
+    // Lắng nghe trạng thái cập nhật phòng
     LaunchedEffect(Unit) {
-        roomViewModel.addRoomState.collectLatest { state ->
+        roomViewModel.updateRoomState.collectLatest { state ->
             when (state) {
-                is AddRoomState.Success -> {
-                    val roomId = state.roomId
-                    Toast.makeText(context, "Phòng đã được thêm thành công", Toast.LENGTH_SHORT).show()
-                    roomViewModel.resetAddRoomState()
+                is UpdateRoomState.Success -> {
+                    isUploading = false
+                    Toast.makeText(context, "Chỉnh sửa phòng thành công", Toast.LENGTH_SHORT).show()
+                    roomViewModel.resetUpdateRoomState()
+                    navController.navigate("author/${displayName}")
                 }
-                is AddRoomState.Error -> {
-                    Toast.makeText(context, "Lỗi: ${state.message}", Toast.LENGTH_SHORT).show()
-                    roomViewModel.resetAddRoomState()
+                is UpdateRoomState.Error -> {
+                    isUploading = false
+                    Toast.makeText(context, "Lỗi khi chỉnh sửa: ${state.message}", Toast.LENGTH_SHORT).show()
+                    roomViewModel.resetUpdateRoomState()
                 }
-                is AddRoomState.Idle -> {}
+                is UpdateRoomState.Idle -> {
+                    isUploading = false
+                }
             }
         }
     }
-    // Lắng nghe trạng thái thêm phòng
 
+    // Lắng nghe trạng thái xóa phòng
+    LaunchedEffect(Unit) {
+        roomViewModel.deleteRoomState.collectLatest { state ->
+            when (state) {
+                is DeleteRoomState.Success -> {
+                    isUploading = false
+                    Toast.makeText(context, "Xóa phòng thành công", Toast.LENGTH_SHORT).show()
+                    roomViewModel.resetDeleteRoomState()
+                    navController.navigate("author/${displayName}")
+                }
+                is DeleteRoomState.Error -> {
+                    isUploading = false
+                    Toast.makeText(context, "Lỗi khi xóa: ${state.message}", Toast.LENGTH_SHORT).show()
+                    roomViewModel.resetDeleteRoomState()
+                }
+                is DeleteRoomState.Loading -> {
+                    isUploading = true
+                }
+                is DeleteRoomState.Idle -> {
+                    isUploading = false
+                }
+            }
+        }
+    }
 
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         imageUris = imageUris + uris
-        Log.d("AddRoomScreen", "Đã chọn ảnh: $uris")
+        Log.d("EditRoom", "Đã chọn ảnh: $uris")
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -141,7 +178,8 @@ fun EditRoom(roomId: String,roomViewModel: RoomViewModel, navController: NavCont
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             com.example.projectandroidapp_findingroom.pages.HeaderRecycling(
                 "Chỉnh sửa phòng",
-                navController
+                navController,
+                "main"
             )
             BodyEdit(
                 imageUris = imageUris,
@@ -176,12 +214,12 @@ fun EditRoom(roomId: String,roomViewModel: RoomViewModel, navController: NavCont
                 hasBed = hasBed,
                 onBedChange = { hasBed = it },
                 telephoneNumber = telephoneNumber,
-                onTelephoneNumber = {telephoneNumber = it},
+                onTelephoneNumber = { telephoneNumber = it },
                 onAddImageClick = requestPermission
             )
             Column {
                 ButtonEdit(
-                    navController,
+                    navController = navController,
                     isLoading = isUploading,
                     onClick = {
                         if (!isNetworkAvailable(context)) {
@@ -201,12 +239,11 @@ fun EditRoom(roomId: String,roomViewModel: RoomViewModel, navController: NavCont
                             context = context,
                             imageUris = imageUris,
                             onComplete = { imageUrls ->
-                                isUploading = false
                                 if (imageUrls.isEmpty()) {
+                                    isUploading = false
                                     Toast.makeText(context, "Không có ảnh nào được tải lên", Toast.LENGTH_SHORT).show()
                                     return@uploadImagesToCloudinary
                                 }
-                                navController.navigate("author/${displayName}")
                                 roomViewModel.updateRoom(
                                     roomId,
                                     Room(
@@ -239,47 +276,33 @@ fun EditRoom(roomId: String,roomViewModel: RoomViewModel, navController: NavCont
                     }
                 )
                 ButtonDelete(
-                    navController,
+                    navController = navController,
                     isLoading = isUploading,
                     onClick = {
-                        navController.navigate("author/${displayName}")
+                        if (!isNetworkAvailable(context)) {
+                            Toast.makeText(context, "Không có kết nối mạng", Toast.LENGTH_SHORT).show()
+                            return@ButtonDelete
+                        }
                         roomViewModel.deleteRoom(roomId)
                     }
                 )
             }
-
         }
     }
 }
 
-@Composable
-fun ButtonDelete(
-    navController: NavController,
-    isLoading: Boolean,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        enabled = !isLoading,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Red
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp, bottom = 30.dp)
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                color = Color.White,
-                modifier = Modifier.size(24.dp)
-            )
-        } else {
-            Text(
-                text = "Xóa phòng",
-                modifier = Modifier.padding(5.dp),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
+// Hàm debounce để tránh nhấn nút nhiều lần
+fun <T> debounce(
+    waitMs: Long = 300L,
+    scope: CoroutineScope,
+    destinationFunction: (T) -> Unit
+): (T) -> Unit {
+    var debounceJob: Job? = null
+    return { param: T ->
+        debounceJob?.cancel()
+        debounceJob = scope.launch {
+            delay(waitMs)
+            destinationFunction(param)
         }
     }
 }
@@ -290,12 +313,13 @@ fun ButtonEdit(
     isLoading: Boolean,
     onClick: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+    val debouncedOnClick = remember { debounce<Unit>(scope = scope) { onClick() } }
+
     Button(
-        onClick = onClick,
+        onClick = { debouncedOnClick(Unit) },
         enabled = !isLoading,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.black)
-        ),
+        colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.black)),
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 30.dp, end = 30.dp, bottom = 10.dp)
@@ -308,6 +332,39 @@ fun ButtonEdit(
         } else {
             Text(
                 text = "Hoàn thành chỉnh sửa",
+                modifier = Modifier.padding(5.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+fun ButtonDelete(
+    navController: NavController,
+    isLoading: Boolean,
+    onClick: () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    val debouncedOnClick = remember { debounce<Unit>(scope = scope) { onClick() } }
+
+    Button(
+        onClick = { debouncedOnClick(Unit) },
+        enabled = !isLoading,
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 30.dp, end = 30.dp, bottom = 30.dp)
+    ) {
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        } else {
+            Text(
+                text = "Xóa phòng",
                 modifier = Modifier.padding(5.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -386,7 +443,13 @@ fun BodyEdit(
             }
             items(imageUris) { uri ->
                 AsyncImage(
-                    model = ImageRequest.Builder(context).data(uri).crossfade(true).build(),
+                    model = ImageRequest.Builder(context)
+                        .data(uri)
+                        .crossfade(true)
+                        .size(100, 100)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .build(),
                     contentDescription = null,
                     modifier = Modifier
                         .size(100.dp)
