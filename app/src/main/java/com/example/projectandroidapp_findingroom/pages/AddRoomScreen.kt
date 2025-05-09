@@ -115,7 +115,7 @@ fun AddRoomScreen(roomViewModel: RoomViewModel, navController: NavController, au
         val scrollState = rememberScrollState()
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             com.example.projectandroidapp_findingroom.pages.HeaderRecycling(
-                "Chi tiết phòng",
+                "Thêm phòng",
                 navController,
                 "main"
             )
