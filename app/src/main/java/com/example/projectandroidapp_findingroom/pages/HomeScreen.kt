@@ -86,9 +86,34 @@ fun HomeScreen(roomViewModel: RoomViewModel, navController: NavController) {
         "Huyện Nhà Bè"
     )
 
+    fun removeVietnameseAccents(text: String): String {
+        return text
+            .replace("á", "a").replace("à", "a").replace("ả", "a").replace("ã", "a").replace("ạ", "a")
+            .replace("ă", "a").replace("ắ", "a").replace("ằ", "a").replace("ẳ", "a").replace("ẵ", "a").replace("ặ", "a")
+            .replace("â", "a").replace("ấ", "a").replace("ầ", "a").replace("ẩ", "a").replace("ẫ", "a").replace("ậ", "a")
+            .replace("é", "e").replace("è", "e").replace("ẻ", "e").replace("ẽ", "e").replace("ẹ", "e")
+            .replace("ê", "e").replace("ế", "e").replace("ề", "e").replace("ể", "e").replace("ễ", "e").replace("ệ", "e")
+            .replace("í", "i").replace("ì", "i").replace("ỉ", "i").replace("ĩ", "i").replace("ị", "i")
+            .replace("ó", "o").replace("ò", "o").replace("ỏ", "o").replace("õ", "o").replace("ọ", "o")
+            .replace("ô", "o").replace("ố", "o").replace("ồ", "o").replace("ổ", "o").replace("ỗ", "o").replace("ộ", "o")
+            .replace("ơ", "o").replace("ớ", "o").replace("ờ", "o").replace("ở", "o").replace("ỡ", "o").replace("ợ", "o")
+            .replace("ú", "u").replace("ù", "u").replace("ủ", "u").replace("ũ", "u").replace("ụ", "u")
+            .replace("ư", "u").replace("ứ", "u").replace("ừ", "u").replace("ử", "u").replace("ữ", "u").replace("ự", "u")
+            .replace("ý", "y").replace("ỳ", "y").replace("ỷ", "y").replace("ỹ", "y").replace("ỵ", "y")
+            .replace("đ", "d")
+    }
+//    fun removeVietnameseAccents(text: String): String {
+//        val withoutAccents = text.replace(Regex("[áàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđ]"), "")
+//        return withoutAccents
+//    }
+//    val filteredList = roomList.filter {
+//        val matchesSearch = it.address.contains(searchInput.text.trim(), ignoreCase = true)
+//        val matchesDistrict = selectedDistrict.isEmpty() || it.address.contains(selectedDistrict, ignoreCase = true)
+//        matchesSearch && matchesDistrict
+//    }
     val filteredList = roomList.filter {
-        val matchesSearch = it.address.contains(searchInput.text.trim(), ignoreCase = true)
-        val matchesDistrict = selectedDistrict.isEmpty() || it.address.contains(selectedDistrict, ignoreCase = true)
+        val matchesSearch = removeVietnameseAccents(it.address).contains(removeVietnameseAccents(searchInput.text.trim()), ignoreCase = true)
+        val matchesDistrict = selectedDistrict.isEmpty() || removeVietnameseAccents(it.address).contains(removeVietnameseAccents(selectedDistrict), ignoreCase = true)
         matchesSearch && matchesDistrict
     }
     Column(

@@ -85,7 +85,7 @@ fun EditRoom(roomId: String, roomViewModel: RoomViewModel, navController: NavCon
     }
 
     // Trạng thái các trường
-    var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var imageUris by remember { mutableStateOf(room.urlImage.map { Uri.parse(it) }) }
     var description by remember { mutableStateOf(TextFieldValue(room.description)) }
     var price by remember { mutableStateOf(TextFieldValue(room.price)) }
     var address by remember { mutableStateOf(TextFieldValue(room.address)) }
