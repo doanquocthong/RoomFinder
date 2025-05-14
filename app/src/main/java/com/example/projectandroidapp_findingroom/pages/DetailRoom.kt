@@ -364,7 +364,7 @@ fun ButtonHotline(telephoneNumber: String) {
         )
     ) {
         Text(
-            text = "Liên hệ: $telephoneNumber",
+            text = "Liên hệ",
             modifier = Modifier.padding(10.dp),
             fontSize = 20.sp,
         )
